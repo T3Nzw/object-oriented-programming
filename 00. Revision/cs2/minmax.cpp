@@ -53,5 +53,7 @@ int main() {
 
   std::cout << min << ' ' << max << '\n';
 
+  delete[] arr2;
+
   return 0;
 }
