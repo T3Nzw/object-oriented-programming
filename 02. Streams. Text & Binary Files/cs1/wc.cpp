@@ -37,6 +37,9 @@ wc_output wc(char const *filename) {
     if (!isWhitespace(prev))
       result.words++;
 
+    if (prev == '\n')
+      result.lines++;
+
     result.bytes++;
   }
 
