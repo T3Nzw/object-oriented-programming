@@ -26,11 +26,27 @@ void simplifyMutable(Rational &rat) {
   int gcdRat = gcd(rat.numer, rat.denom);
   rat.numer /= gcdRat;
   rat.denom /= gcdRat;
+
+  if (rat.numer < 0 && rat.denom < 0
+   || rat.numer > 0 && rat.denom < 0) {
+
+    rat.numer *= -1;
+    rat.denom *= -1;
+  }
 }
 
 Rational simplify(Rational const &rat) {
   int gcdRat = gcd(rat.numer, rat.denom);
-  return {rat.numer / gcdRat, rat.denom / gcdRat};
+  Rational result{rat.numer / gcdRat, rat.denom / gcdRat};
+
+  if (result.numer < 0 && result.denom < 0
+   || result.numer > 0 && result.denom < 0) {
+
+    result.numer *= -1;
+    result.denom *= -1;
+  }
+
+  return result;
 
   // или използвайки предишната функция
   // Rational cpy = rat;
