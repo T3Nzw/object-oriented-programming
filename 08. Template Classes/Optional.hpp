@@ -18,6 +18,7 @@ public:
   }
 
 public:
+  // + имплементациите, разбира се
   Optional();
   Optional(T const &data);
   Optional(Optional const &);

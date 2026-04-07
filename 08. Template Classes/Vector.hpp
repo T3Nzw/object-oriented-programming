@@ -7,7 +7,54 @@
 
 template<typename T>
 class Vector {
+private:
+  class Iterator {
+  public:
+    // не притежаваме ресурса, който се сочи от m_curr
+    Iterator(T *curr) : m_curr(curr) {}
+
+    Iterator &operator++() {
+      ++m_curr;
+      return *this;
+    }
+
+    // ==
+    bool operator!=(Iterator const &other) const {
+      return m_curr != other.m_curr;
+    }
+
+    // *it = 4;
+    T &operator*() {
+      return *m_curr;
+    }
+
+    T const &operator*() const {
+      return *m_curr;
+    }
+
+  private:
+    T *m_curr;
+  };
+
 public:
+  using iterator = Iterator;
+
+  iterator begin() {
+    return Iterator(m_arr);
+  }
+
+  Iterator end() {
+    return Iterator(m_arr + m_size);
+  }
+
+  Iterator begin() const {
+    return Iterator(m_arr);
+  }
+
+  Iterator end() const {
+  return Iterator(m_arr + m_size);
+  }
+
   bool empty() const {
     return m_size == 0;
   }

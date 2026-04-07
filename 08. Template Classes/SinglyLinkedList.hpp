@@ -6,7 +6,59 @@
 
 template<typename T>
 class LinkedList {
+private:
+  class Node;
+
+  class Iterator {
+  public:
+    Iterator(Node *curr) : m_curr(curr) {}
+
+    Iterator &operator++() {
+      m_curr = m_curr->next;
+      return *this;
+    }
+
+    // it++
+    Iterator operator++(int) {
+      Iterator cpy = *this;
+      ++(*this);
+      return cpy;
+    }
+
+    // operator+(size_t offset)
+
+    bool operator!=(Iterator const &other) const {
+      return m_curr != other.m_curr;
+    }
+
+    T &operator*() {
+      return m_curr->data;
+    }
+
+    T const &operator*() const {
+      return m_curr->data;
+    }
+
+  private:
+    Node *m_curr;
+  };
+
 public:
+  Iterator begin() {
+    return Iterator(m_begin);
+  }
+  Iterator begin() const {
+    return Iterator(m_begin);
+  }
+
+  Iterator end() {
+    return Iterator(nullptr);
+  }
+
+  Iterator end() const {
+    return Iterator(nullptr);
+  }
+
   bool empty() const {
     return !m_begin;
   }
@@ -173,7 +225,6 @@ private:
   Node *m_begin;
   Node *m_end;
   std::size_t m_size;
-
 };
 
 #endif // __SINGLY_LINKED_LIST_HPP
