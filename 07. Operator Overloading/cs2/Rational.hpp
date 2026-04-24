@@ -31,6 +31,11 @@ public:
   // int b = ++a; // 11
   // int c = a++; // 11
 
+  // унарен operator-
+  Rational operator-() const {
+    return Rational(-m_numerator, m_denominator);
+  }
+
   // префиксен operator++
   Rational &operator++() {
     m_numerator += m_denominator;
@@ -45,6 +50,18 @@ public:
     return cpy;
   }
 
+  Rational &operator--() {
+    m_numerator -= m_denominator;
+    normalise();
+    return *this;
+  }
+
+  Rational operator--(int) {
+    Rational cpy(*this);
+    --*this;
+    return cpy;
+  }
+
   Rational &operator+=(Rational const &other) {
     m_numerator = m_numerator * other.m_denominator + other.m_numerator * m_denominator;
     m_denominator *= other.m_denominator;
@@ -54,8 +71,16 @@ public:
     return *this;
   }
 
+  // това НЕ работи за нещо от вида 4 + rat, като rat има тип Rational,
+  // тъй като лявата страна на оператора задължително трябва да е обект на
+  // класа Rational (не може да се преобразува до такъв имплицитно).
+  // затова единият вариант е да имплементираме по-долната friend функция
   Rational operator+(Rational const &other) const {
     return Rational(*this) += other;
+  }
+
+  friend Rational operator+(int x, Rational const &other) {
+    return Rational(x) += other;
   }
 
   Rational &operator*=(Rational const &other) {
@@ -67,8 +92,30 @@ public:
     return *this;
   }
 
+  // бихме могли да направим същото нещо и с operator* (или operator-, operator/ и т.н.)
+
+  /*
   Rational operator*(Rational const &other) const {
     return Rational(*this) *= other;
+  }
+
+  friend Rational operator*(int x, Rational const &other) {
+    return Rational(x) *= other;
+  }
+  */
+
+  // но бихме могли да обединим двете функции в една приятелска,
+  // която позволява всеки от двата аргумента да бъде имплицитно
+  // преобразуван до нещо от тип Rational (поне единият аргумент
+  // трябва да има тип Rational!), т.е. можем да правим:
+  // 1. rat1 + rat2
+  // 2. rat1 + x
+  // 3. x + rat1
+  // където rat1 и rat2 са от тип Rational, а x - от тип int
+  // (или тип, който може да бъде преобразуван до int)
+
+  friend Rational operator*(Rational const &lhs, Rational const &rhs) {
+    return Rational(lhs) *= rhs;
   }
 
   // Rational rat;
@@ -84,7 +131,21 @@ public:
   // Rational rat;
   // static_cast<double>(rat) ; (double)rat
 
-  // оператор за преобразуване на типове
+  // оператор за преобразуване на типове;
+  // бяхме казали, че може да доведе до проблеми:
+  // 1. ако имаме rat от тип Rational и x от тип double
+  //    и предефиниран оператор + за Rational,
+  //    то ще получим неяснота (ambiguity) при оценката на следния израз:
+  //    rat + x (или x + rat), защото и operator+(double, double),
+  //    и operator+(Rational const &, Rational const &) могат
+  //    да бъдат използвани при оценката на горния израз.
+  // 2. неявни преобразувания на Rational до double,
+  //    които могат да доведат до различни проблеми (напр. горния)
+  // п.с. ако тествате кода, закоментирайте този оператор, защото по-горе
+  // са имплементирани operator+, operator* и т.н., така че може
+  // да получите проблем като първия :) по принцип това нещо не бихме го имплементирали
+  // с такъв оператор, а например - double toDouble() const метод, като това ни задължава
+  // да го извикаме експлицитно (т.е. получаваме type safety)
   operator double() const {
     // return (*this)();
     return static_cast<double>(m_numerator) / m_denominator;
