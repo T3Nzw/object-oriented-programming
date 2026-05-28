@@ -26,7 +26,8 @@ int main() {
   // reference collapsing
   int &&s = static_cast<int &&>(y);
 
-  int &&v = z;
+  // грешка
+  // int &&v = z;
 
   int *arr1;
   int *arr2 = arr1;
