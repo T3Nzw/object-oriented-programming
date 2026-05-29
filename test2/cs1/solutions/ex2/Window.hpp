@@ -18,7 +18,7 @@ public:
   }
 
   Window operator++(int) {
-    Window cpy;
+    Window cpy = *this;
     ++*this;
     return cpy;
   }
