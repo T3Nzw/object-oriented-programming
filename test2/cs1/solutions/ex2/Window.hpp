@@ -35,6 +35,9 @@ public:
 
 private:
   void shift() {
+    if (window.empty())
+      return;
+
     window.erase(window.begin());
 
     if (index + k < elements.size())
