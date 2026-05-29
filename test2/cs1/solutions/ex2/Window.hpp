@@ -19,7 +19,7 @@ public:
 
   Window operator++(int) {
     Window cpy;
-    ++cpy;
+    ++*this;
     return cpy;
   }
 
